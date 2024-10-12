@@ -6,7 +6,7 @@ const startFileManager = async() => {
     console.log(`You are currently in ${homedir()}`);
     console.log(dirname);
 
-    // const { list } = await import('./scripts/list.js');
+    const { list } = await import('./scripts/list.js');
 
     const username = process.argv.reduce((acc, item) => {
         if(item.includes('username')) {
@@ -29,7 +29,7 @@ const startFileManager = async() => {
             console.log(`\n Thank you for using File Manager, ${username}, goodbye!`);
             process.exit(0);
         } else if (data.includes('ls')) {
-            // list();
+            list();
             console.log('List');
         } else {
             console.log(`${data}`)
