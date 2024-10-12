@@ -1,0 +1,12 @@
+{
+  "name": "node.js-tasks",
+  "version": "1.0.0",
+  "description": "File manager task",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "start:name": "node src/index.js username=Name"
+  },
+  "author": "",
+  "license": "ISC"
+}
