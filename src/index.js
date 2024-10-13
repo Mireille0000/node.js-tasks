@@ -3,6 +3,7 @@ import { cwd } from 'node:process';
 import { createInterface } from 'node:readline';
 import { up } from './scripts/up.js';
 import { cd } from './scripts/cd.js';
+import { readFile } from './scripts/fs/read.js';
 const { list } = await import('./scripts/list.js');
 
 const startFileManager = async() => {
@@ -33,7 +34,7 @@ const startFileManager = async() => {
             process.exit(0);
         } );
         
-        rl.on('line', (line) => {
+        rl.on('line', async (line) => {
             if(line.includes('.exit')) {
                 if (username) {
                     console.log(`\n Thank you for using File Manager, ${username}, goodbye!`);
@@ -45,10 +46,11 @@ const startFileManager = async() => {
                 list();
             } else if(line.includes('up')) {
                 up();
-            } else if(line.includes(`cd`)) {
+            } else if(line.includes('cd')) {
                 cd(`${line.split('').slice(2, line.length).join('')}`.trim());
-            }
-                else {
+            } else if(line.includes('cat')) {
+                await readFile(`${line.split('').slice(3, line.length).join('')}`.trim());
+            } else {
                 console.error(`Invalid input`)
             }  
             console.log(`\nYou are currently in ${cwd()}\n`);
