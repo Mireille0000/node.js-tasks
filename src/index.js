@@ -5,6 +5,7 @@ import { up } from './scripts/up.js';
 import { cd } from './scripts/cd.js';
 import { readFile } from './scripts/fs/read.js';
 import { createFile } from './scripts/fs/create.js';
+import { renameFile } from './scripts/fs/rename.js';
 const { list } = await import('./scripts/list.js');
 
 const startFileManager = async() => {
@@ -36,6 +37,7 @@ const startFileManager = async() => {
         } );
         
         rl.on('line', async (line) => {
+            const args = `${line.split(' ').slice(1, line.length).join(' ')}`.trim();
             if(line.includes('.exit')) {
                 if (username) {
                     console.log(`\n Thank you for using File Manager, ${username}, goodbye!`);
@@ -48,11 +50,15 @@ const startFileManager = async() => {
             } else if(line.includes('up')) {
                 up();
             } else if(line.includes('cd')) {
-                cd(`${line.split('').slice(2, line.length).join('')}`.trim());
+                cd(args);
             } else if(line.includes('cat')) {
-                await readFile(`${line.split('').slice(3, line.length).join('')}`.trim());
+                await readFile(args);
             } else if(line.includes('add')) {
-                await createFile(`${line.split('').slice(3, line.length).join('')}`.trim());
+                await createFile(args);
+            } else if(line.includes('rn')) {
+                const paths = args.split(' ');
+                const [oldPath, newPath] = paths;
+                await renameFile(oldPath, newPath);
             } else {
                 console.error(`Invalid input`)
             }  
