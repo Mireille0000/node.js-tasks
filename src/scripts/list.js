@@ -1,10 +1,10 @@
 import { readdir } from 'node:fs/promises'
-import { dirname } from '../utiles.js';
 import { stat } from 'node:fs';
 
 export const list = async() => {
+    const currentPath = process.cwd();
     try {
-        const dir = await readdir(dirname, {recursive: true, withFileTypes: true});
+        const dir = await readdir(currentPath, { withFileTypes: true});
         const statsList = [];
         for (let i = 0; i < dir.length; i++) {
             statsList.push(new Promise((resolve, reject) => {
@@ -28,8 +28,18 @@ export const list = async() => {
             return typeOfItem
         }).then(res => {
             const dirContent = dir.map((item,i) => {
-                return {name: item.name, type: res[i]};
+
+                return {name: item.name.slice(0, 20), type: res[i]}; //
             });
+            
+            dirContent.sort((a, b) => {
+                return a.name.localeCompare(b.name);
+            });
+
+            dirContent.sort((a, b) => {
+                return a.type.localeCompare(b.type);
+            })
+            
             console.table(dirContent);
         });
     } catch {
