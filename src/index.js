@@ -4,6 +4,7 @@ import { createInterface } from 'node:readline';
 import { up } from './scripts/up.js';
 import { cd } from './scripts/cd.js';
 import { readFile } from './scripts/fs/read.js';
+import { createFile } from './scripts/fs/create.js';
 const { list } = await import('./scripts/list.js');
 
 const startFileManager = async() => {
@@ -50,12 +51,14 @@ const startFileManager = async() => {
                 cd(`${line.split('').slice(2, line.length).join('')}`.trim());
             } else if(line.includes('cat')) {
                 await readFile(`${line.split('').slice(3, line.length).join('')}`.trim());
+            } else if(line.includes('add')) {
+                await createFile(`${line.split('').slice(3, line.length).join('')}`.trim());
             } else {
                 console.error(`Invalid input`)
             }  
             console.log(`\nYou are currently in ${cwd()}\n`);
         });
-        process.chdir(homedir())
+        // process.chdir(homedir())
         console.log(`\nYou are currently in ${cwd()}\n`);
     } catch(err) {
         console.error(err);
