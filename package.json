@@ -4,8 +4,7 @@
   "description": "File manager task",
   "type": "module",
   "scripts": {
-    "start": "node src/index.js",
-    "start:name": "node src/index.js username=Name"
+    "start": "node src/index.js"
   },
   "author": "",
   "license": "ISC"
