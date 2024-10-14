@@ -11,6 +11,7 @@ import { moveFile } from './scripts/fs/move.js';
 import { deleteFile } from './scripts/fs/delete.js';
 import { getCPUArchitecture, getCPUsHostMachineInfo, getEOL, getHomeDir, getUserName } from './scripts/os-info/os-commands.js';
 import { calculateFileHash } from './scripts/hash/hash-calculation.js';
+import { compressFile } from './scripts/brotli/compress.js';
 const { list } = await import('./scripts/nwd/list.js');
 
 const startFileManager = async() => {
@@ -89,8 +90,12 @@ const startFileManager = async() => {
             } else if(regex.test('os --architecture')) {
                 getCPUArchitecture();
             } else if(line.includes('hash')) {
-                // console.log('Hash');
                 await calculateFileHash(args);
+            } else if(line.includes('compress')) {
+                const paths = args.split(' ');
+                const [oldPath, newPath] = paths;
+                console.log(oldPath, newPath);
+                await compressFile(oldPath, newPath);
             } else {
                 console.error(`Invalid input`)
             }  

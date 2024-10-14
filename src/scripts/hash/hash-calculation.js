@@ -14,6 +14,6 @@ export const calculateFileHash = async(filePath) => {
         const fileHash = await getHash(filePath);
         console.log(fileHash);
     } catch {
-        console.error('Operation failed');
+        console.error('Operation failed: no such file or directory');
     }
 }
