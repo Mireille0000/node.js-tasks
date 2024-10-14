@@ -1,11 +1,12 @@
 import { homedir } from 'node:os';
 import { cwd } from 'node:process';
 import { createInterface } from 'node:readline';
-import { up } from './scripts/up.js';
-import { cd } from './scripts/cd.js';
+import { up } from './scripts/upToFolders.js';
+import { cd } from './scripts/downToFolders.js';
 import { readFile } from './scripts/fs/read.js';
 import { createFile } from './scripts/fs/create.js';
 import { renameFile } from './scripts/fs/rename.js';
+import { copyFile } from './scripts/fs/copy.js';
 const { list } = await import('./scripts/list.js');
 
 const startFileManager = async() => {
@@ -59,6 +60,12 @@ const startFileManager = async() => {
                 const paths = args.split(' ');
                 const [oldPath, newPath] = paths;
                 await renameFile(oldPath, newPath);
+            } else if(line.includes('cp')) {
+                const paths = args.split(' ');
+                const [oldPath, newPath] = paths;
+                const fileToCopy = oldPath.split('/'); 
+                console.log(fileToCopy[fileToCopy.length - 1])
+                await copyFile(oldPath, newPath + '/' + fileToCopy[fileToCopy.length - 1]);
             } else {
                 console.error(`Invalid input`)
             }  
