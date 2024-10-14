@@ -7,6 +7,7 @@ import { readFile } from './scripts/fs/read.js';
 import { createFile } from './scripts/fs/create.js';
 import { renameFile } from './scripts/fs/rename.js';
 import { copyFile } from './scripts/fs/copy.js';
+import { moveFile } from './scripts/fs/move.js';
 const { list } = await import('./scripts/list.js');
 
 const startFileManager = async() => {
@@ -66,6 +67,13 @@ const startFileManager = async() => {
                 const fileToCopy = oldPath.split('/'); 
                 console.log(fileToCopy[fileToCopy.length - 1])
                 await copyFile(oldPath, newPath + '/' + fileToCopy[fileToCopy.length - 1]);
+            } else if(line.includes('mv')) {
+                console.log('Move');
+                const paths = args.split(' ');
+                const [oldPath, newPath] = paths;
+                const fileToMove = oldPath.split('/'); 
+                console.log(fileToMove[fileToMove.length - 1])
+                await moveFile(oldPath, newPath + '/' + fileToMove[fileToMove.length - 1])
             } else {
                 console.error(`Invalid input`)
             }  
