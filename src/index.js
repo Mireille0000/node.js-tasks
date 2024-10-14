@@ -11,7 +11,10 @@ import { moveFile } from './scripts/fs/move.js';
 import { deleteFile } from './scripts/fs/delete.js';
 import { getCPUArchitecture, getCPUsHostMachineInfo, getEOL, getHomeDir, getUserName } from './scripts/os-info/os-commands.js';
 import { calculateFileHash } from './scripts/hash/hash-calculation.js';
-import { compressFile } from './scripts/brotli/compress.js';
+// import { compressFile } from './scripts/brotli/compress.js';
+// import { decompressFile } from './scripts/brotli/decompress.js';
+
+import { brotliHandler } from './scripts/brotli/brotli-handler.js';
 const { list } = await import('./scripts/nwd/list.js');
 
 const startFileManager = async() => {
@@ -79,7 +82,8 @@ const startFileManager = async() => {
                 await moveFile(oldPath, newPath + '/' + fileToMove[fileToMove.length - 1])
             } else if(line.includes('rm')) {
                 await deleteFile(args);
-            } else if(regex.test('os --EOL')) {
+            } 
+            else if(regex.test('os --EOL')) {
                 getEOL();
             } else if(regex.test('os --cpus')) {
                 getCPUsHostMachineInfo();
@@ -91,17 +95,15 @@ const startFileManager = async() => {
                 getCPUArchitecture();
             } else if(line.includes('hash')) {
                 await calculateFileHash(args);
-            } else if(line.includes('compress')) {
-                const paths = args.split(' ');
-                const [oldPath, newPath] = paths;
-                console.log(oldPath, newPath);
-                await compressFile(oldPath, newPath);
-            } else {
+            } 
+            else {
                 console.error(`Invalid input`)
             }  
+
+            brotliHandler(line);
             console.log(`\nYou are currently in ${cwd()}\n`);
         });
-        // process.chdir(homedir())
+        process.chdir(homedir());
         console.log(`\nYou are currently in ${cwd()}\n`);
     } catch(err) {
         console.error(err);
