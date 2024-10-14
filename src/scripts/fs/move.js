@@ -15,5 +15,5 @@ export const moveFile = async(fileToMove, destination) => {
         rm(fileToMove, () => {})
         return res;
     });
-    // move file + delete the file from the dir where it was
+    // move a file + delete the file from the dir where it was
 }
