@@ -9,7 +9,7 @@ import { renameFile } from './scripts/fs/rename.js';
 import { copyFile } from './scripts/fs/copy.js';
 import { moveFile } from './scripts/fs/move.js';
 import { deleteFile } from './scripts/fs/delete.js';
-import { getCPUHostMachineInfo, getEOL } from './scripts/os-info/os-commands.js';
+import { getCPUArchitecture, getCPUsHostMachineInfo, getEOL, getHomeDir, getUserName } from './scripts/os-info/os-commands.js';
 const { list } = await import('./scripts/list.js');
 
 const startFileManager = async() => {
@@ -43,7 +43,7 @@ const startFileManager = async() => {
         rl.on('line', async (line) => {
             const args = `${line.split(' ').slice(1, line.length).join(' ')}`.trim();
             const regex = new RegExp(line);
-            
+
             if(line.includes('.exit')) {
                 if (username) {
                     console.log(`\n Thank you for using File Manager, ${username}, goodbye!`);
@@ -61,7 +61,7 @@ const startFileManager = async() => {
                 await readFile(args);
             } else if(line.includes('add')) {
                 await createFile(args);
-            } else if(line.includes('rn')) {
+            } else if(line.includes('rn') && !line.includes('--')) {
                 const paths = args.split(' ');
                 const [oldPath, newPath] = paths;
                 await renameFile(oldPath, newPath);
@@ -80,7 +80,13 @@ const startFileManager = async() => {
             } else if(regex.test('os --EOL')) {
                 getEOL();
             } else if(regex.test('os --cpus')) {
-                getCPUHostMachineInfo();
+                getCPUsHostMachineInfo();
+            } else if(regex.test('os --homedir')) {
+                getHomeDir();    
+            } else if(regex.test('os --username')) {
+                getUserName();
+            } else if(regex.test('os --architecture')) {
+                getCPUArchitecture();
             } else {
                 console.error(`Invalid input`)
             }  

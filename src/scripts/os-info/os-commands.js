@@ -1,8 +1,8 @@
-import { EOL, cpus } from 'node:os';
+import { EOL, cpus, homedir, userInfo, arch } from 'node:os';
 
 export const getEOL = () => {
     const EOLValue = JSON.stringify(EOL);
-    console.log(EOLValue);
+    console.log(`EOL value: ${EOLValue}`);
 }
 
 export const getCPUsHostMachineInfo = () => {
@@ -16,4 +16,17 @@ export const getCPUsHostMachineInfo = () => {
 
     console.log(`Overall amount of CPUS: ${CPUInfoArr.length}`);
     console.table(CPUInfoArr);
+}
+
+export const getHomeDir = () => {
+    console.log(`Home directory: ${homedir()}`);
+}
+
+export const getUserName = () => {
+    const username = userInfo().username
+    console.log(`System user name: ${username}`);
+}
+
+export const getCPUArchitecture = () => {
+    console.log(`Operating system CPU architecture: ${arch()}`);
 }
