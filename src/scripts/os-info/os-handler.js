@@ -3,7 +3,7 @@ import { getCPUArchitecture, getCPUsHostMachineInfo, getEOL, getHomeDir, getUser
 export const osHandler = async(line) => {
     const args = line.split(' ');
     const [command, param] = args;
-
+try {
     if (command === 'os') {
         if(param.includes('--EOL')) {
             getEOL();
@@ -19,6 +19,9 @@ export const osHandler = async(line) => {
             console.log('No parameter chosen')
         }
     } else {
-        console.log('')
+        console.log();
     }
+} catch {
+    console.error('No parameter chosen');
+}
 }

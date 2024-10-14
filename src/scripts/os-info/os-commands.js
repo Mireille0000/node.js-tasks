@@ -7,10 +7,10 @@ export const getEOL = () => {
 
 export const getCPUsHostMachineInfo = () => {
     const hostMachinInfo = cpus();
+    console.log(hostMachinInfo);
     const CPUInfoArr = hostMachinInfo.reduce((acc, item) => {
-        const modelInfo = item.model.split(' ');
-        const clockRate = modelInfo[modelInfo.length - 1];
-        acc.push({model: item.model, ['clock rate(GHz)']: `${clockRate}`});
+        const clockRate = (item.speed/1000).toFixed(2);
+        acc.push({model: item.model, ['clock rate(GHz)']: `${clockRate}GHz`});
         return acc;
     }, []);
 

@@ -47,8 +47,6 @@ const startFileManager = async() => {
         
         rl.on('line', async (line) => {
             const args = `${line.split(' ').slice(1, line.length).join(' ')}`.trim();
-            // const regex = new RegExp(line);
-
             if(line.includes('.exit')) {
                 if (username) {
                     console.log(`\n Thank you for using File Manager, ${username}, goodbye!`);
@@ -63,32 +61,9 @@ const startFileManager = async() => {
             } else if(line.includes('cd')) {
                 cd(args);
             } 
-            // else if(line.includes('cat')) {
-            //     await readFile(args);
-            // } else if(line.includes('add')) {
-            //     await createFile(args);
-            // } else if(line.includes('rn') && !line.includes('--')) {
-            //     const paths = args.split(' ');
-            //     const [oldPath, newPath] = paths;
-            //     await renameFile(oldPath, newPath);
-            // } else if(line.includes('cp') && !line.includes('--cpus')) {
-            //     const paths = args.split(' ');
-            //     const [oldPath, newPath] = paths;
-            //     const fileToCopy = oldPath.split('/'); 
-            //     await copyFile(oldPath, newPath + '/' + fileToCopy[fileToCopy.length - 1]);
-            // } else if(line.includes('mv')) {
-            //     const paths = args.split(' ');
-            //     const [oldPath, newPath] = paths;
-            //     const fileToMove = oldPath.split('/'); 
-            //     await moveFile(oldPath, newPath + '/' + fileToMove[fileToMove.length - 1])
-            // } else if(line.includes('rm')) {
-            //     await deleteFile(args);
-            // } 
-
-
             else if(line.includes('hash')) {
                 await calculateFileHash(args);
-            }
+            } 
 
             await fsHandler(line);
             await brotliHandler(line);

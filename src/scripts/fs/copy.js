@@ -14,8 +14,8 @@ export const copyFile = async(fileToCopy, destination) => {
     
                 readable.pipe(writable);
     
-                readable.on('error', () => console.log('Operation failed'));
-                writable.on('error', () => console.log('Operation failed'));
+                readable.on('error', (err) => console.log(err, 'Operation failed'));
+                writable.on('error', (err) => console.log(err, 'Operation failed'));
             };
         })
     } else {
