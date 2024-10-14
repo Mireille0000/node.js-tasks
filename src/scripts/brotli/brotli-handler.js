@@ -9,6 +9,6 @@ export const brotliHandler = async(line) => {
     } else if (command === 'decompress') {
         await decompressFile(pathOne, pathTwo);
     } else {
-        console.log('Operation failed');
+        console.log('');
      }
 }

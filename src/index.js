@@ -9,12 +9,12 @@ import { renameFile } from './scripts/fs/rename.js';
 import { copyFile } from './scripts/fs/copy.js';
 import { moveFile } from './scripts/fs/move.js';
 import { deleteFile } from './scripts/fs/delete.js';
-import { getCPUArchitecture, getCPUsHostMachineInfo, getEOL, getHomeDir, getUserName } from './scripts/os-info/os-commands.js';
+
 import { calculateFileHash } from './scripts/hash/hash-calculation.js';
-// import { compressFile } from './scripts/brotli/compress.js';
-// import { decompressFile } from './scripts/brotli/decompress.js';
 
 import { brotliHandler } from './scripts/brotli/brotli-handler.js';
+import { osHandler } from './scripts/os-info/os-handler.js';
+import { fsHandler } from './scripts/fs/fs-handler.js';
 const { list } = await import('./scripts/nwd/list.js');
 
 const startFileManager = async() => {
@@ -47,7 +47,7 @@ const startFileManager = async() => {
         
         rl.on('line', async (line) => {
             const args = `${line.split(' ').slice(1, line.length).join(' ')}`.trim();
-            const regex = new RegExp(line);
+            // const regex = new RegExp(line);
 
             if(line.includes('.exit')) {
                 if (username) {
@@ -62,47 +62,41 @@ const startFileManager = async() => {
                 up();
             } else if(line.includes('cd')) {
                 cd(args);
-            } else if(line.includes('cat')) {
-                await readFile(args);
-            } else if(line.includes('add')) {
-                await createFile(args);
-            } else if(line.includes('rn') && !line.includes('--')) {
-                const paths = args.split(' ');
-                const [oldPath, newPath] = paths;
-                await renameFile(oldPath, newPath);
-            } else if(line.includes('cp') && !line.includes('--cpus')) {
-                const paths = args.split(' ');
-                const [oldPath, newPath] = paths;
-                const fileToCopy = oldPath.split('/'); 
-                await copyFile(oldPath, newPath + '/' + fileToCopy[fileToCopy.length - 1]);
-            } else if(line.includes('mv')) {
-                const paths = args.split(' ');
-                const [oldPath, newPath] = paths;
-                const fileToMove = oldPath.split('/'); 
-                await moveFile(oldPath, newPath + '/' + fileToMove[fileToMove.length - 1])
-            } else if(line.includes('rm')) {
-                await deleteFile(args);
             } 
-            else if(regex.test('os --EOL')) {
-                getEOL();
-            } else if(regex.test('os --cpus')) {
-                getCPUsHostMachineInfo();
-            } else if(regex.test('os --homedir')) {
-                getHomeDir();    
-            } else if(regex.test('os --username')) {
-                getUserName();
-            } else if(regex.test('os --architecture')) {
-                getCPUArchitecture();
-            } else if(line.includes('hash')) {
-                await calculateFileHash(args);
-            } 
-            else {
-                console.error(`Invalid input`)
-            }  
+            // else if(line.includes('cat')) {
+            //     await readFile(args);
+            // } else if(line.includes('add')) {
+            //     await createFile(args);
+            // } else if(line.includes('rn') && !line.includes('--')) {
+            //     const paths = args.split(' ');
+            //     const [oldPath, newPath] = paths;
+            //     await renameFile(oldPath, newPath);
+            // } else if(line.includes('cp') && !line.includes('--cpus')) {
+            //     const paths = args.split(' ');
+            //     const [oldPath, newPath] = paths;
+            //     const fileToCopy = oldPath.split('/'); 
+            //     await copyFile(oldPath, newPath + '/' + fileToCopy[fileToCopy.length - 1]);
+            // } else if(line.includes('mv')) {
+            //     const paths = args.split(' ');
+            //     const [oldPath, newPath] = paths;
+            //     const fileToMove = oldPath.split('/'); 
+            //     await moveFile(oldPath, newPath + '/' + fileToMove[fileToMove.length - 1])
+            // } else if(line.includes('rm')) {
+            //     await deleteFile(args);
+            // } 
 
-            brotliHandler(line);
-            console.log(`\nYou are currently in ${cwd()}\n`);
+
+            else if(line.includes('hash')) {
+                await calculateFileHash(args);
+            }
+
+            await fsHandler(line);
+            await brotliHandler(line);
+            await osHandler(line);
+            setTimeout(() => console.log(`\nYou are currently in ${cwd()}\n`), 500);
         });
+
+        rl.on('error', () => console.log('Invalid input'));
         process.chdir(homedir());
         console.log(`\nYou are currently in ${cwd()}\n`);
     } catch(err) {
