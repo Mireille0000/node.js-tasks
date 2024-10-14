@@ -1,8 +1,8 @@
 import { homedir } from 'node:os';
 import { cwd } from 'node:process';
 import { createInterface } from 'node:readline';
-import { up } from './scripts/up-to-folders.js';
-import { cd } from './scripts/down-to-folders.js';
+import { up } from './scripts/nwd/up-to-folders.js';
+import { cd } from './scripts/nwd/down-to-folders.js';
 import { readFile } from './scripts/fs/read.js';
 import { createFile } from './scripts/fs/create.js';
 import { renameFile } from './scripts/fs/rename.js';
@@ -10,7 +10,8 @@ import { copyFile } from './scripts/fs/copy.js';
 import { moveFile } from './scripts/fs/move.js';
 import { deleteFile } from './scripts/fs/delete.js';
 import { getCPUArchitecture, getCPUsHostMachineInfo, getEOL, getHomeDir, getUserName } from './scripts/os-info/os-commands.js';
-const { list } = await import('./scripts/list.js');
+import { calculateFileHash } from './scripts/hash/hash-calculation.js';
+const { list } = await import('./scripts/nwd/list.js');
 
 const startFileManager = async() => {
     const rl = createInterface({ input: process.stdin, output: process.stdout });
@@ -87,6 +88,9 @@ const startFileManager = async() => {
                 getUserName();
             } else if(regex.test('os --architecture')) {
                 getCPUArchitecture();
+            } else if(line.includes('hash')) {
+                // console.log('Hash');
+                await calculateFileHash(args);
             } else {
                 console.error(`Invalid input`)
             }  
