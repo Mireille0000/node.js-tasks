@@ -1,17 +1,10 @@
 import { createServer } from "node:http";
-import { buffer } from "node:stream/consumers";
+import dotenv from 'dotenv';
+dotenv.config();
+import { server } from "./server/server";
 
-console.log('Hello, Node');
-const server = createServer((res, req) => {
-    res.statusCode = 200;
-    res.statusMessage = 'Works';
-    req.setHeader('Content-type', 'data');
-    req.write(JSON.stringify({message: 'Request completed'}));
-    req.end();
-    
-})
-
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT;
 
 server.listen(PORT, () => {
+    console.log(`The app is listening to port ${PORT}`);
 });
