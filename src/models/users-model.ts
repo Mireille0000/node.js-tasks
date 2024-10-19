@@ -1,19 +1,27 @@
 import { UserData } from "../utils/interfaces";
 
-import { createReadStream, writeFile } from "node:fs";
+import { createReadStream, readFile, writeFile } from "node:fs";
 
 import { randomUUID } from 'node:crypto';
+import { error } from "node:console";
+import { isValidUserData } from "../utils/requests-utils";
 
 export const userRandomId = randomUUID();
 
-export const findUsers = (): Promise<UserData[]> => {
+export const findUsers = (): Promise<UserData[] | {}> => {
     return new Promise((resolve, reject) => {
-        const users = createReadStream('src/data/users-data.json');
-        users.on("data", (data) => {
-            console.log(JSON.parse(data as string))
-            resolve(JSON.parse(data as string));
-        })
-
+        try {
+            readFile('src/data/users-data.json', {encoding: 'utf-8'}, (err,data) => {
+                if (err) console.log("Error");
+                if (data.length === 0) {
+                    resolve(data);
+                } else {
+                    resolve(JSON.parse(data));
+                }
+            })
+        } catch(err) {
+            reject(err);
+        }
     })
 }
 
@@ -22,25 +30,41 @@ export const findUserById = (id: string): Promise<UserData> => {
         const usersStream = createReadStream('src/data/users-data.json');
         usersStream.on("data", (data) => {
             const users: UserData[] = JSON.parse(data as string);
-            console.log(users);
-            const user = users.find((user) => user.id === id) as UserData;
-            resolve(user);
+            if (users) {
+                const user = users.find((user) => user.id === id) as UserData;
+                resolve(user);
+            } else {
+                reject(error);
+            }
         })
     })
 }
 
-export const postNewUser = (user: UserData): Promise<UserData> => {
+export const addNewUser = (user: UserData): Promise<UserData | {}> => {
     return new Promise((resolve, reject) => {
-        const {username, age, hobbies} = user
+        try {
+            const {username, age, hobbies} = user
+            const newUser = {id: userRandomId, username, age, hobbies};
+            const isValidData = isValidUserData(username, age, hobbies);
 
-        const newUser = {id: userRandomId, username, age, hobbies};
-        const usersStream = createReadStream('src/data/users-data.json');
-        usersStream.on("data", (data) => {
-           const usersArr = JSON.parse(data as string);
-           usersArr.push(newUser)
-           writeFile('src/data/users-data.json', JSON.stringify(usersArr), () => {});
-           resolve(newUser);
-        })
+            readFile('src/data/users-data.json', {encoding: 'utf-8'}, (err, data) => {
+                if(data.length === 0 && isValidData) {
+                    const usersArr: UserData[] = [];
+                    usersArr.push(newUser);
+                    writeFile('src/data/users-data.json', JSON.stringify(usersArr), () => {});
+                    resolve(newUser);
+                } else if (isValidData) {
+                    const usersArr: UserData[] = JSON.parse(data as string);
+                    usersArr.push(newUser);
+                    writeFile('src/data/users-data.json', JSON.stringify(usersArr), () => {});
+                    resolve(newUser);
+                } else {
+                    resolve([]);
+                    console.log("Invalid data");
+                }
+            })
+        } catch(err){
+            console.log(err);
+        }
     })
-
 }

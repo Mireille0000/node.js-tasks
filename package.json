@@ -15,6 +15,7 @@
     "@types/node": "^22.7.6",
     "@types/webpack": "^5.28.5",
     "@webpack-cli/generators": "^3.0.7",
+    "nodemon": "^3.1.7",
     "ts-loader": "^9.5.1",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",

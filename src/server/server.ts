@@ -4,6 +4,7 @@ import {  Methods } from "../utils/requests-utils";
 import { getUserById, getUsers, postUser } from "../controllers/users-controller";
 
 export const server = createServer((req, res) => {
+    
     if (req.url === '/api/users' && req.method === Methods.GET) {
         getUsers(req, res);
     } else if ((req.url as string).match(/\/api\/users\/([0-9a-f])/) && req.method === Methods.GET) {
@@ -12,7 +13,7 @@ export const server = createServer((req, res) => {
     } else if (req.url === '/api/users' && req.method === Methods.POST) {
         postUser(req, res);
     } else {
-        res.writeHead(404, {'Content-type': 'application/json', });
+        res.writeHead(400, {'Content-type': 'application/json', });
         res.end(JSON.stringify({message: 'Bad Request'}))
     }
 })
