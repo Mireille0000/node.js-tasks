@@ -2,6 +2,7 @@ import { IncomingMessage, ServerResponse } from "http";
 import { findUserById, findUsers } from "../models/users-model";
 import { UserData } from "../utils/interfaces";
 import {createReadStream } from "node:fs";
+import { isValid } from "../utils/requests-utils";
 
 
 export const getUsers = async(req: IncomingMessage, res: ServerResponse<IncomingMessage>) => {
@@ -14,17 +15,22 @@ export const getUsers = async(req: IncomingMessage, res: ServerResponse<Incoming
     }
 }
 
-// export const getUserById = async(req: IncomingMessage, res: ServerResponse<IncomingMessage>) => {
-//     try {
-//         const user: UserData = await findUserById();
-//         if(user) {
-//             res.writeHead(200, {'Content-type': 'application/json'});
-//             res.end(JSON.stringify({users: user, message: 'Request Completed Successfully (Get)'}))  
-//         } else {
-//             res.writeHead(404, {'Content-type': 'application/json'});
-//             res.end(JSON.stringify({message: 'User Not Found (GetById)'})) 
-//         } 
-//     } catch (error) {
-//         console.log(error);
-//     }
-// }
+export const getUserById = async(req: IncomingMessage, res: ServerResponse<IncomingMessage>, id: string) => {
+    try {
+        const user: UserData = await findUserById(id);
+
+        if(!user && isValid(id) === true) {
+            res.writeHead(404, {'Content-type': 'application/json'});
+            res.end(JSON.stringify({message: 'User Not Found (GetById)'}));
+        } else if(isValid(id) === false) {
+            res.writeHead(400, {'Content-type': 'application/json'});
+            res.end(JSON.stringify({message: 'Invalid Id (GetById)'})) 
+        } else {
+            console.log(user);
+            res.writeHead(200, {'Content-type': 'application/json'});
+            res.end(JSON.stringify({user, message: 'Request Completed Successfully Get_Id'}));
+        } 
+    } catch (error) {
+        console.log(error);
+    }
+}
