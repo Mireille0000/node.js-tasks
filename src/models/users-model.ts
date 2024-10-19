@@ -68,3 +68,33 @@ export const addNewUser = (user: UserData): Promise<UserData | {}> => {
         }
     })
 }
+
+export const findUserToUpdate = (id: string, user: UserData): Promise<UserData | []> => {
+    return new Promise((resolve, reject) => {
+        try {
+            const {id, username, age, hobbies} = user;
+            const updatedUser = {id, username, age, hobbies};
+            const isValidData = isValidUserData(username, age, hobbies);
+
+            readFile('src/data/users-data.json', {encoding: 'utf-8'}, (err, data) => {
+                if(data.length === 0 && isValidData) {
+                    const usersArr: UserData[] = [];
+                    usersArr.push(updatedUser);
+                    writeFile('src/data/users-data.json', JSON.stringify(usersArr), () => {});
+                    resolve([]);
+                } else if (isValidData) {
+                    const usersArr: UserData[] = JSON.parse(data as string);
+                    const i = usersArr.findIndex((user) => user.id === id);
+                    usersArr[i] = {id, username, age, hobbies};
+                    writeFile('src/data/users-data.json', JSON.stringify(usersArr), () => {});
+                    resolve(updatedUser);
+                } else {
+                    resolve([]);
+                    console.log("Invalid data");
+                }
+            })
+        } catch(err){
+            console.log(err);
+        }
+    })
+}

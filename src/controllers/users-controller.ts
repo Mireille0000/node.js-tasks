@@ -1,5 +1,5 @@
 import { IncomingMessage, ServerResponse } from "http";
-import { findUserById, findUsers, addNewUser } from "../models/users-model";
+import { findUserById, findUsers, addNewUser, findUserToUpdate } from "../models/users-model";
 import { UserData } from "../utils/interfaces";
 import { getPostUserData, isValid, isValidUserData } from "../utils/requests-utils";
 
@@ -56,6 +56,42 @@ export const postUser = async(req: IncomingMessage, res: ServerResponse<Incoming
                 res.writeHead(400, {'Content-type': 'application/json'});
                 res.end(JSON.stringify({message: "Username, age and hobbies fields should be filled. Values of the fields should be of a proper type"}));
             }
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+export const updateUserData = async(req: IncomingMessage, res: ServerResponse<IncomingMessage>, id: string) => {
+    try {
+        const userById = await findUserById(id);
+
+        if(!userById && isValid(id) === true) {
+            res.writeHead(404, {'Content-type': 'application/json'});
+            res.end(JSON.stringify({message: 'User Not Found (Put)'}));
+        } else if(isValid(id) === false) {
+            res.writeHead(400, {'Content-type': 'application/json'});
+            res.end(JSON.stringify({message: 'Invalid Id (Put)'})) 
+        } else {
+            const body = await getPostUserData(req);
+
+            const {username, age, hobbies} = JSON.parse(body) as UserData;
+            const user: UserData = {
+                username,
+                age,
+                hobbies
+            };
+    
+            const updatedUser = {
+                id: id,
+                username: username || user.username,
+                age: age || user.age,
+                hobbies: hobbies || user.hobbies
+            }
+    
+            const upDatedUserData = await findUserToUpdate(id as string, updatedUser);
+            res.writeHead(200, {'Content-type': 'application/json'});
+            res.end(JSON.stringify({upDatedUserData, message: 'User Date Updated (Put)'})) 
+        } 
     } catch (error) {
         console.error(error);
     }
