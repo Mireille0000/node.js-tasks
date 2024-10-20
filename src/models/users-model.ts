@@ -5,6 +5,7 @@ import { createReadStream, readFile, writeFile } from "node:fs";
 import { randomUUID } from 'node:crypto';
 import { error } from "node:console";
 import { isValidUserData } from "../utils/requests-utils";
+import { rejects } from "node:assert";
 
 export const userRandomId = randomUUID();
 
@@ -72,7 +73,7 @@ export const addNewUser = (user: UserData): Promise<UserData | {}> => {
 export const findUserToUpdate = (id: string, user: UserData): Promise<UserData | []> => {
     return new Promise((resolve, reject) => {
         try {
-            const {id, username, age, hobbies} = user;
+            const {username, age, hobbies} = user;
             const updatedUser = {id, username, age, hobbies};
             const isValidData = isValidUserData(username, age, hobbies);
 
@@ -92,6 +93,22 @@ export const findUserToUpdate = (id: string, user: UserData): Promise<UserData |
                     resolve([]);
                     console.log("Invalid data");
                 }
+            })
+        } catch(err){
+            console.log(err);
+        }
+    })
+}
+
+export const findUserToDelete = (id: string): Promise<UserData[] | []> => {
+    return new Promise((resolve, reject) => {
+        try {
+            readFile('src/data/users-data.json', {encoding: 'utf-8'}, (err, data) => {
+                    const usersArr: UserData[] = JSON.parse(data as string);
+                    const i = usersArr.findIndex((user) => user.id === id);
+                    usersArr.splice(i, 1);
+                    writeFile('src/data/users-data.json', JSON.stringify(usersArr), () => {});
+                    resolve(usersArr);
             })
         } catch(err){
             console.log(err);

@@ -1,5 +1,5 @@
 import { IncomingMessage, ServerResponse } from "http";
-import { findUserById, findUsers, addNewUser, findUserToUpdate } from "../models/users-model";
+import { findUserById, findUsers, addNewUser, findUserToUpdate, findUserToDelete } from "../models/users-model";
 import { UserData } from "../utils/interfaces";
 import { getPostUserData, isValid, isValidUserData } from "../utils/requests-utils";
 
@@ -91,6 +91,26 @@ export const updateUserData = async(req: IncomingMessage, res: ServerResponse<In
             const upDatedUserData = await findUserToUpdate(id as string, updatedUser);
             res.writeHead(200, {'Content-type': 'application/json'});
             res.end(JSON.stringify({upDatedUserData, message: 'User Date Updated (Put)'})) 
+        } 
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+export const deleteUser = async(req: IncomingMessage, res: ServerResponse<IncomingMessage>, id: string) => {
+    try {
+        const userById = await findUserById(id);
+
+        if(!userById && isValid(id) === true) {
+            res.writeHead(404, {'Content-type': 'application/json'});
+            res.end(JSON.stringify({message: 'User Not Found (Put)'}));
+        } else if(isValid(id) === false) {
+            res.writeHead(400, {'Content-type': 'application/json'});
+            res.end(JSON.stringify({message: 'Invalid Id (Put)'})) 
+        } else {
+            await findUserToDelete(id);
+            res.writeHead(200, {'Content-type': 'application/json'});
+            res.end(JSON.stringify({message: 'User Deleted Successfully (Put)'})) 
         } 
     } catch (error) {
         console.error(error);
