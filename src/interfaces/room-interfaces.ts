@@ -5,14 +5,14 @@ interface CreateGameData {
     idPlayer: ids;
 }
 
-interface UpdateRoomStateData {
-    roomId: ids,
-    roomUsers: [
-        {
-            name: string,
-            index: ids,
-        }
-    ]
+interface RoomUsers {
+    name: string;
+    index: ids;
 }
 
-export {CreateGameData, UpdateRoomStateData}
+interface UpdateRoomStateData {
+    roomId: ids,
+    roomUsers: RoomUsers [] | [],
+}
+
+export {CreateGameData, RoomUsers, UpdateRoomStateData}
